@@ -1,0 +1,5 @@
+br\com\totvs\Main.class
+br\com\totvs\Domain\Despesa.class
+br\com\totvs\BD\SQLiteConnection.class
+br\com\totvs\Domain\Categoria.class
+br\com\totvs\Domain\Familia.class
