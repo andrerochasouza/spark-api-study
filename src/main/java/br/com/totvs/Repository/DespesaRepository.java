@@ -41,18 +41,18 @@ public class DespesaRepository {
         }
     }
 
-    public void addDespesa(String nome, double valor, String dataInicio, String dataFinal, String dataPagamento, boolean isParcelado, int qtdParcelas, String tipoDespesa, int idFamilia) {
+    public void addDespesa(Despesa despesa, int idFamilia) {
         String sql = "INSERT INTO despesas(nome, valor, dataInicio, dataFinal, dataPagamento, isParcelado, qtdParcelas, tipoDespesa, idFamilia) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
-            stmt.setObject(1, nome);
-            stmt.setObject(2, valor);
-            stmt.setObject(3, dataInicio);
-            stmt.setObject(4, dataFinal);
-            stmt.setObject(5, dataPagamento);
-            stmt.setObject(6, isParcelado);
-            stmt.setObject(7, qtdParcelas);
-            stmt.setObject(8, tipoDespesa);
+            stmt.setObject(1, despesa.getNome());
+            stmt.setObject(2, despesa.getValor());
+            stmt.setObject(3, despesa.getDataInicio());
+            stmt.setObject(4, despesa.getDataFinal());
+            stmt.setObject(5, despesa.getDataPagamento());
+            stmt.setObject(6, despesa.isParcelado());
+            stmt.setObject(7, despesa.getQtdParcelas());
+            stmt.setObject(8, despesa.getTipoDespesa().toString());
             stmt.setObject(9, idFamilia);
             stmt.execute();
             System.out.println("Despesa inserida com sucesso.");
@@ -107,21 +107,21 @@ public class DespesaRepository {
         }
     }
 
-    public void updateDespesa(int idDespesa, String nome, double valor, String dataInicio, String dataFinal, String dataPagamento, boolean isParcelado, int qtdParcelas, String tipoDespesa, int idFamilia){
+    public void updateDespesa(Despesa despesa, int idFamilia){
         String sql = "UPDATE despesas SET nome = ?, valor = ?, dataInicio = ?, dataFinal = ?, dataPagamento = ?, isParcelado = ?, qtdParcelas = ?, tipoDespesa = ?, idFamilia = ? WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
-            stmt.setObject(1, nome);
-            stmt.setObject(2, valor);
-            stmt.setObject(3, dataInicio);
-            stmt.setObject(4, dataFinal);
-            stmt.setObject(5, dataPagamento);
-            stmt.setObject(6, isParcelado);
-            stmt.setObject(7, qtdParcelas);
-            stmt.setObject(8, tipoDespesa);
+            stmt.setObject(1, despesa.getNome());
+            stmt.setObject(2, despesa.getValor());
+            stmt.setObject(3, despesa.getDataInicio());
+            stmt.setObject(4, despesa.getDataFinal());
+            stmt.setObject(5, despesa.getDataPagamento());
+            stmt.setObject(6, despesa.isParcelado());
+            stmt.setObject(7, despesa.getQtdParcelas());
+            stmt.setObject(8, despesa.getTipoDespesa().toString());
             stmt.setObject(9, idFamilia);
-            stmt.setObject(10, idDespesa);
+            stmt.setObject(10, despesa.getId());
             stmt.execute();
             System.out.println("Despesa atualizada com sucesso.");
 
@@ -203,6 +203,34 @@ public class DespesaRepository {
         }
 
         return despesa;
+    }
+
+    public List<Despesa> getDepesasByFamiliaToPage(int idFamilia, int page, int size){
+        String sql = "SELECT * FROM despesas WHERE idFamilia = ? LIMIT ? OFFSET ?";
+        List<Despesa> despesas = new ArrayList<>();
+        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+            stmt.setObject(1, idFamilia);
+            stmt.setObject(2, size);
+            stmt.setObject(3, (page - 1) * size);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Despesa despesa = new Despesa();
+                despesa.setId(rs.getInt("id"));
+                despesa.setNome(rs.getString("nome"));
+                despesa.setValor(rs.getDouble("valor"));
+                despesa.setDataInicio(Date.valueOf(rs.getString("dataInicio")));
+                despesa.setDataFinal(Date.valueOf(rs.getString("dataFinal")));
+                despesa.setDataPagamento(Date.valueOf(rs.getString("dataPagamento")));
+                despesa.setParcelado(rs.getBoolean("isParcelado"));
+                despesa.setQtdParcelas(rs.getInt("qtdParcelas"));
+                despesa.setTipoDespesa(Categoria.valueOf(rs.getString("tipoDespesa")));
+                despesas.add(despesa);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return despesas;
     }
 
 }
