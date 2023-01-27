@@ -25,8 +25,12 @@ public class FamiliaService {
         return familiaRepository.getFamilia(familiaId).getSalario();
     }
 
-    public void deleteFamilia(int familiaId){
-        familiaRepository.deleteFamiliaById(familiaId);
+    public String deleteFamilia(int familiaId){
+        return familiaRepository.deleteFamiliaById(familiaId);
+    }
+
+    public String deleteAllFamilias(){
+        return familiaRepository.deleteAllFamilias();
     }
 
     public void updateFamilia(int familiaId, String nome, double salario){

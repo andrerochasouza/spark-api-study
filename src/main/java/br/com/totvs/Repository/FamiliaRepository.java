@@ -4,6 +4,8 @@ import br.com.totvs.BD.SQLiteConnection;
 import br.com.totvs.Domain.Familia;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FamiliaRepository {
 
@@ -44,34 +46,42 @@ public class FamiliaRepository {
         }
     }
 
-    public void deleteFamiliaById(int id) {
+    public String deleteFamiliaById(int id) {
         String sql = "DELETE FROM familias WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
+            if(this.getFamilia(id) == null){
+                return "Não existe nenhuma familia com esse id.";
+            }
+
             stmt.setObject(1, id);
             stmt.execute();
             despesaRepository.deleteDespesasByFamiliaId(id);
-            System.out.println("Familia deletada com sucesso.");
+            return "Familia deletada com sucesso.";
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            System.out.println("Não foi possível deletar a familia.");
+            return "Não foi possível deletar a familia.";
         }
     }
 
-    public void deleteAllFamilias() {
+    public String deleteAllFamilias() {
         String sql = "DELETE FROM familias";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
+            if(this.getAllFamilias().size() == 0){
+                return "Não existe nenhuma familia para ser deletada.";
+            }
+
             stmt.execute();
             despesaRepository.deleteAllDespesas();
-            System.out.println("Todas as familias deletadas com sucesso.");
+            return "Todas as familias deletadas com sucesso.";
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            System.out.println("Não foi possível deletar as familias.");
+            return "Não foi possível deletar as familias.";
         }
     }
 
@@ -146,5 +156,30 @@ public class FamiliaRepository {
 
         return familia;
 
+    }
+
+    public List<Familia> getAllFamilias(){
+        String sql = "SELECT * FROM familias";
+        List<Familia> familias = new ArrayList<>();
+
+        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                Familia familia = new Familia();
+                familia.setId(rs.getInt("id"));
+                familia.setNome(rs.getString("nome"));
+                familia.setSalario(rs.getDouble("salario"));
+                familia.setDespesas(despesaRepository.getDespesasByFamilia(rs.getInt("id")));
+                familias.add(familia);
+            }
+            System.out.println("Familias selecionadas com sucesso.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Não foi possível selecionar as familias.");
+        }
+
+        return familias;
     }
 }

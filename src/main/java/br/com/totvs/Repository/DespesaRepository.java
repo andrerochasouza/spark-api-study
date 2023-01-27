@@ -5,12 +5,15 @@ import br.com.totvs.Domain.Categoria;
 import br.com.totvs.Domain.Despesa;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DespesaRepository {
 
     private Connection connection;
+    private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public DespesaRepository() {
         this.connection = SQLiteConnection.getInstance().getConnection();
@@ -68,6 +71,11 @@ public class DespesaRepository {
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
+            if(this.getDespesa(idDespesa) == null){
+                System.out.println("Não há despesa para ser deletada.");
+                return;
+            }
+
             stmt.setObject(1, idDespesa);
             stmt.execute();
             System.out.println("Despesa deletada com sucesso.");
@@ -82,6 +90,12 @@ public class DespesaRepository {
         String sql = "DELETE FROM despesas";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+
+            if(this.getAllDespesas().size() == 0){
+                System.out.println("Não há despesas para serem deletadas.");
+                return;
+            }
+
 
             stmt.execute();
             System.out.println("Todas as despesas foram deletadas com sucesso.");
@@ -141,9 +155,9 @@ public class DespesaRepository {
                 despesa.setId(rs.getInt("id"));
                 despesa.setNome(rs.getString("nome"));
                 despesa.setValor(rs.getDouble("valor"));
-                despesa.setDataInicio(Date.valueOf(rs.getString("dataInicio")));
-                despesa.setDataFinal(Date.valueOf(rs.getString("dataFinal")));
-                despesa.setDataPagamento(Date.valueOf(rs.getString("dataPagamento")));
+                despesa.setDataInicio(sdf.parse(rs.getString("dataInicio")));
+                despesa.setDataFinal(sdf.parse(rs.getString("dataFinal")));
+                despesa.setDataPagamento(sdf.parse(rs.getString("dataPagamento")));
                 despesa.setParcelado(rs.getBoolean("isParcelado"));
                 despesa.setQtdParcelas(rs.getInt("qtdParcelas"));
                 despesa.setTipoDespesa(Categoria.valueOf(rs.getString("tipoDespesa")));
@@ -151,7 +165,10 @@ public class DespesaRepository {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+
         return despesas;
     }
 
@@ -166,9 +183,9 @@ public class DespesaRepository {
                 despesa.setId(rs.getInt("id"));
                 despesa.setNome(rs.getString("nome"));
                 despesa.setValor(rs.getDouble("valor"));
-                despesa.setDataInicio(Date.valueOf(rs.getString("dataInicio")));
-                despesa.setDataFinal(Date.valueOf(rs.getString("dataFinal")));
-                despesa.setDataPagamento(Date.valueOf(rs.getString("dataPagamento")));
+                despesa.setDataInicio(sdf.parse(rs.getString("dataInicio")));
+                despesa.setDataFinal(sdf.parse(rs.getString("dataFinal")));
+                despesa.setDataPagamento(sdf.parse(rs.getString("dataPagamento")));
                 despesa.setParcelado(rs.getBoolean("isParcelado"));
                 despesa.setQtdParcelas(rs.getInt("qtdParcelas"));
                 despesa.setTipoDespesa(Categoria.valueOf(rs.getString("tipoDespesa")));
@@ -176,6 +193,8 @@ public class DespesaRepository {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         return despesas;
@@ -191,15 +210,17 @@ public class DespesaRepository {
                 despesa.setId(rs.getInt("id"));
                 despesa.setNome(rs.getString("nome"));
                 despesa.setValor(rs.getDouble("valor"));
-                despesa.setDataInicio(Date.valueOf(rs.getString("dataInicio")));
-                despesa.setDataFinal(Date.valueOf(rs.getString("dataFinal")));
-                despesa.setDataPagamento(Date.valueOf(rs.getString("dataPagamento")));
+                despesa.setDataInicio(sdf.parse(rs.getString("dataInicio")));
+                despesa.setDataFinal(sdf.parse(rs.getString("dataFinal")));
+                despesa.setDataPagamento(sdf.parse(rs.getString("dataPagamento")));
                 despesa.setParcelado(rs.getBoolean("isParcelado"));
                 despesa.setQtdParcelas(rs.getInt("qtdParcelas"));
                 despesa.setTipoDespesa(Categoria.valueOf(rs.getString("tipoDespesa")));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         return despesa;
@@ -218,9 +239,9 @@ public class DespesaRepository {
                 despesa.setId(rs.getInt("id"));
                 despesa.setNome(rs.getString("nome"));
                 despesa.setValor(rs.getDouble("valor"));
-                despesa.setDataInicio(Date.valueOf(rs.getString("dataInicio")));
-                despesa.setDataFinal(Date.valueOf(rs.getString("dataFinal")));
-                despesa.setDataPagamento(Date.valueOf(rs.getString("dataPagamento")));
+                despesa.setDataInicio(sdf.parse(rs.getString("dataInicio")));
+                despesa.setDataFinal(sdf.parse(rs.getString("dataFinal")));
+                despesa.setDataPagamento(sdf.parse(rs.getString("dataPagamento")));
                 despesa.setParcelado(rs.getBoolean("isParcelado"));
                 despesa.setQtdParcelas(rs.getInt("qtdParcelas"));
                 despesa.setTipoDespesa(Categoria.valueOf(rs.getString("tipoDespesa")));
@@ -228,6 +249,8 @@ public class DespesaRepository {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         return despesas;

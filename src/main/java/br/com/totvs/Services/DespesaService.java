@@ -6,7 +6,6 @@ import br.com.totvs.Domain.Familia;
 import br.com.totvs.Repository.DespesaRepository;
 import br.com.totvs.Repository.FamiliaRepository;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +51,10 @@ public class DespesaService {
 
     public void deleteDespesa(int despesaId){
         despesaRepository.deleteDespesaById(despesaId);
+    }
+
+    public void deleteAllDespesas(){
+        despesaRepository.deleteAllDespesas();
     }
 
     public void updateDespesa(int idFamilia, int despesaId, String nomeDespesa, double valor, Date dataFinal, Date dataPagamento, boolean isParcelado, int qtdParcelas, Categoria tipoDespesa){
