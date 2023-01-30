@@ -22,7 +22,8 @@ public class FamiliaRepository {
         String sql = "CREATE TABLE IF NOT EXISTS familias (\n"
                 + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
                 + "	nome text NOT NULL,\n"
-                + "	salario real NOT NULL\n"
+                + "	salario real NOT NULL,\n"
+                + " carteira real NOT NULL\n"
                 + ");";
 
         try (Statement stmt = this.connection.createStatement()) {
@@ -32,12 +33,13 @@ public class FamiliaRepository {
         }
     }
 
-    public void addFamilia(String nome, double salario) {
-        String sql = "INSERT INTO familias(nome, salario) VALUES(?, ?)";
+    public void addFamilia(String nome, double salario, double carteira) {
+        String sql = "INSERT INTO familias(nome, salario, carteira) VALUES(?, ?, ?)";
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
             stmt.setObject(1, nome);
             stmt.setObject(2, salario);
+            stmt.setObject(3, carteira);
             stmt.execute();
             System.out.println("Familia inserida com sucesso.");
 
@@ -77,22 +79,24 @@ public class FamiliaRepository {
 
             stmt.execute();
             despesaRepository.deleteAllDespesas();
-            return "Todas as familias deletadas com sucesso.";
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return "Não foi possível deletar as familias.";
         }
+
+        return "Todas as familias deletadas com sucesso.";
     }
 
-    public void updateFamilia(int id, String nome, double salario) {
-        String sql = "UPDATE familias SET nome = ?, salario = ? WHERE id = ?";
+    public void updateFamilia(int id, String nome, double salario, double carteira) {
+        String sql = "UPDATE familias SET nome = ?, salario = ?, SET carteira = ? WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
             stmt.setObject(1, nome);
             stmt.setObject(2, salario);
-            stmt.setObject(3, id);
+            stmt.setObject(3, carteira);
+            stmt.setObject(4, id);
             stmt.execute();
             System.out.println("Familia atualizada com sucesso.");
 
@@ -102,7 +106,7 @@ public class FamiliaRepository {
         }
     }
 
-    public void updateFamilia(int id, String nome) {
+    public void updateFamiliaNome(int id, String nome) {
         String sql = "UPDATE familias SET nome = ? WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
@@ -118,7 +122,7 @@ public class FamiliaRepository {
         }
     }
 
-    public void updateFamilia(int id, double salario) {
+    public void updateFamiliaSalario(int id, double salario) {
         String sql = "UPDATE familias SET salario = ? WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
@@ -134,8 +138,25 @@ public class FamiliaRepository {
         }
     }
 
+    public void updateFamiliaCarteira(int id, double carteira) {
+        String sql = "UPDATE familias SET carteira = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+
+            stmt.setObject(1, carteira);
+            stmt.setObject(2, id);
+            stmt.execute();
+            System.out.println("Familia atualizada com sucesso.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Não foi possível atualizar a familia.");
+        }
+    }
+
 
     public Familia getFamilia(int id) {
+
         String sql = "SELECT * FROM familias WHERE id = ?";
         Familia familia = new Familia();
 
@@ -143,9 +164,15 @@ public class FamiliaRepository {
 
             stmt.setObject(1, id);
             ResultSet rs = stmt.executeQuery();
+
+            if(!rs.next()){
+                return null;
+            }
+
             familia.setId(rs.getInt("id"));
             familia.setNome(rs.getString("nome"));
             familia.setSalario(rs.getDouble("salario"));
+            familia.setCarteira(rs.getDouble("carteira"));
             familia.setDespesas(despesaRepository.getDespesasByFamilia(id));
             System.out.println("Familia selecionada com sucesso.");
 
@@ -165,11 +192,42 @@ public class FamiliaRepository {
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
             ResultSet rs = stmt.executeQuery();
+
             while(rs.next()){
                 Familia familia = new Familia();
                 familia.setId(rs.getInt("id"));
                 familia.setNome(rs.getString("nome"));
                 familia.setSalario(rs.getDouble("salario"));
+                familia.setCarteira(rs.getDouble("carteira"));
+                familia.setDespesas(despesaRepository.getDespesasByFamilia(rs.getInt("id")));
+                familias.add(familia);
+            }
+            System.out.println("Familias selecionadas com sucesso.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Não foi possível selecionar as familias.");
+        }
+
+        return familias;
+    }
+
+    public List<Familia> getAllFamiliasToPage(int page, int size){
+        String sql = "SELECT * FROM familias LIMIT ? OFFSET ?";
+        List<Familia> familias = new ArrayList<>();
+
+        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+
+            stmt.setObject(1, size);
+            stmt.setObject(2, (page - 1) * size);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next()){
+                Familia familia = new Familia();
+                familia.setId(rs.getInt("id"));
+                familia.setNome(rs.getString("nome"));
+                familia.setSalario(rs.getDouble("salario"));
+                familia.setCarteira(rs.getDouble("carteira"));
                 familia.setDespesas(despesaRepository.getDespesasByFamilia(rs.getInt("id")));
                 familias.add(familia);
             }

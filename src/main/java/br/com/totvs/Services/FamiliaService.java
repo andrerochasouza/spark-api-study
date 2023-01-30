@@ -17,8 +17,8 @@ public class FamiliaService {
         this.familiaRepository = familiaRepository;
     }
 
-    public void addFamilia(String nome, double salario){
-        familiaRepository.addFamilia(nome, salario);
+    public void addFamilia(String nome, double salario, double carteira){
+        familiaRepository.addFamilia(nome, salario, carteira);
     }
 
     public double getSalarioFamilia(int familiaId){
@@ -33,8 +33,20 @@ public class FamiliaService {
         return familiaRepository.deleteAllFamilias();
     }
 
-    public void updateFamilia(int familiaId, String nome, double salario){
-        familiaRepository.updateFamilia(familiaId, nome, salario);
+    public void updateFamilia(int familiaId, String nome, double salario, double carteira){
+        familiaRepository.updateFamilia(familiaId, nome, salario, carteira);
+    }
+
+    public void updateFamiliaNome(int familiaId, String nome){
+        familiaRepository.updateFamiliaNome(familiaId, nome);
+    }
+
+    public void updateFamiliaSalario(int familiaId, double salario){
+        familiaRepository.updateFamiliaSalario(familiaId, salario);
+    }
+
+    public void updateFamiliaCarteira(int familiaId, double carteira){
+        familiaRepository.updateFamiliaCarteira(familiaId, carteira);
     }
 
     public Familia getFamilia(int familiaId){
@@ -47,6 +59,14 @@ public class FamiliaService {
 
     public List<Despesa> getAllDespesasFamiliaByPage(int familiaId, int page, int size){
         return despesaRepository.getDepesasByFamiliaToPage(familiaId, page, size);
+    }
+
+    public List<Familia> getAllFamilias(){
+        return familiaRepository.getAllFamilias();
+    }
+
+    public List<Familia> getAllFamiliasByPage(int page, int size){
+        return familiaRepository.getAllFamiliasToPage(page, size);
     }
 
 }

@@ -6,6 +6,7 @@ import br.com.totvs.Domain.Familia;
 import br.com.totvs.Repository.DespesaRepository;
 import br.com.totvs.Repository.FamiliaRepository;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -19,14 +20,14 @@ public class DespesaService {
         this.familiaRepository = familiaRepository;
     }
 
-    public void addDespesaAFamilia(int idFamilia, String nomeDespesa, double valor, Date dataFinal, Date dataPagamento, boolean isParcelado, int qtdParcelas, Categoria tipoDespesa){
+    public void addDespesaAFamilia(int idFamilia, String nomeDespesa, double valor, String dataFinal, String dataPagamento, boolean isParcelado, int qtdParcelas, Categoria tipoDespesa){
 
         Despesa despesa = new Despesa();
         Familia familia = familiaRepository.getFamilia(idFamilia);
 
         despesa.setNome(nomeDespesa);
         despesa.setValor(valor);
-        despesa.setDataInicio(Date.from(new Date().toInstant()));
+        despesa.setDataInicio(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
         despesa.setDataFinal(dataFinal);
         despesa.setDataPagamento(dataPagamento);
         despesa.setParcelado(isParcelado);
@@ -49,16 +50,16 @@ public class DespesaService {
         return despesaRepository.getAllDespesas();
     }
 
-    public void deleteDespesa(int despesaId){
-        despesaRepository.deleteDespesaById(despesaId);
+    public String deleteDespesa(int despesaId){
+        return despesaRepository.deleteDespesaById(despesaId);
     }
 
-    public void deleteAllDespesas(){
-        despesaRepository.deleteAllDespesas();
+    public String deleteAllDespesas(){
+        return despesaRepository.deleteAllDespesas();
     }
 
-    public void updateDespesa(int idFamilia, int despesaId, String nomeDespesa, double valor, Date dataFinal, Date dataPagamento, boolean isParcelado, int qtdParcelas, Categoria tipoDespesa){
-        Despesa despesa = despesaRepository.getDespesa(despesaId);
+    public void updateDespesa(int id, int idFamilia, String nomeDespesa, double valor, String dataFinal, String dataPagamento, boolean isParcelado, int qtdParcelas, Categoria tipoDespesa){
+        Despesa despesa = despesaRepository.getDespesa(id);
         Familia familia = familiaRepository.getFamilia(idFamilia);
 
         despesa.setNome(nomeDespesa);
@@ -70,6 +71,10 @@ public class DespesaService {
         despesa.setTipoDespesa(tipoDespesa);
 
         despesaRepository.updateDespesa(despesa, familia.getId());
+    }
+
+    public List<Despesa> getAllDespesasByPage(int page, int size){
+        return despesaRepository.getAllDespesasByPage(page, size);
     }
 
 

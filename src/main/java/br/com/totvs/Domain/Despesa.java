@@ -1,5 +1,6 @@
 package br.com.totvs.Domain;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -8,14 +9,14 @@ public class Despesa {
     private int id = 0;
     private String nome = "";
     private double valor = 0;
-    private Date dataInicio = new Date();
-    private Date dataFinal = new Date();
-    private Date dataPagamento = new Date();
+    private String dataInicio = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+    private String dataFinal = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+    private String dataPagamento = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
     private boolean isParcelado = false;
     private int qtdParcelas = 0;
     private Categoria tipoDespesa = Categoria.OUTROS;
 
-    public Despesa(int id, String nome, double valor, Date dataInicio, Date dataFinal, Date dataPagamento, boolean isParcelado, int qtdParcelas, Categoria tipoDespesa) {
+    public Despesa(int id, String nome, double valor, String dataInicio, String dataFinal, String dataPagamento, boolean isParcelado, int qtdParcelas, Categoria tipoDespesa) {
         this.id = id;
         this.nome = nome;
         this.valor = valor;
@@ -54,27 +55,27 @@ public class Despesa {
         this.valor = valor;
     }
 
-    public Date getDataInicio() {
+    public String getDataInicio() {
         return dataInicio;
     }
 
-    public void setDataInicio(Date dataInicio) {
+    public void setDataInicio(String dataInicio) {
         this.dataInicio = dataInicio;
     }
 
-    public Date getDataFinal() {
+    public String getDataFinal() {
         return dataFinal;
     }
 
-    public void setDataFinal(Date dataFinal) {
+    public void setDataFinal(String dataFinal) {
         this.dataFinal = dataFinal;
     }
 
-    public Date getDataPagamento() {
+    public String getDataPagamento() {
         return dataPagamento;
     }
 
-    public void setDataPagamento(Date dataPagamento) {
+    public void setDataPagamento(String dataPagamento) {
         this.dataPagamento = dataPagamento;
     }
 
@@ -144,9 +145,9 @@ public class Despesa {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", valor=" + valor +
-                ", dataInicio=" + dataInicio +
-                ", dataFinal=" + dataFinal +
-                ", dataPagamento=" + dataPagamento +
+                ", dataInicio='" + dataInicio + '\'' +
+                ", dataFinal='" + dataFinal + '\'' +
+                ", dataPagamento='" + dataPagamento + '\'' +
                 ", isParcelado=" + isParcelado +
                 ", qtdParcelas=" + qtdParcelas +
                 ", tipoDespesa=" + tipoDespesa +
