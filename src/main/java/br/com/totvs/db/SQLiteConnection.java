@@ -1,4 +1,4 @@
-package br.com.totvs.BD;
+package br.com.totvs.db;
 
 import java.io.File;
 import java.io.IOException;

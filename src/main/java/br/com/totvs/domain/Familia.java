@@ -1,4 +1,4 @@
-package br.com.totvs.Domain;
+package br.com.totvs.domain;
 
 import java.util.ArrayList;
 import java.util.List;

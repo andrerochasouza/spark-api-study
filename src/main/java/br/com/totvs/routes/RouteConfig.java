@@ -1,12 +1,9 @@
-package br.com.totvs.Routes;
+package br.com.totvs.routes;
 
-import br.com.totvs.BD.SQLiteConnection;
-import br.com.totvs.Controllers.DespesaController;
-import br.com.totvs.Controllers.FamiliaController;
-import br.com.totvs.Utils.ExceptionHandle;
+import br.com.totvs.controllers.DespesaController;
+import br.com.totvs.controllers.FamiliaController;
+import br.com.totvs.db.SQLiteConnection;
 import com.google.gson.Gson;
-
-import java.sql.SQLException;
 
 import static spark.Spark.*;
 
@@ -61,10 +58,6 @@ public class RouteConfig {
                 post("/add", (req, res) -> FamiliaController.addFamilia(req, res), gson::toJson);
             });
 
-            exception(IllegalArgumentException.class, (exception, req, res) -> ExceptionHandle.handleException400(exception, req, res));
-            exception(NullPointerException.class, (exception, req, res) -> ExceptionHandle.handleException400(exception, req, res));
-            exception(SQLException.class, (exception, req, res) -> ExceptionHandle.handleException500(exception, req, res));
-            exception(Exception.class, (exception, req, res) -> ExceptionHandle.handleException500(exception, req, res));
 
         });
 
@@ -131,11 +124,6 @@ public class RouteConfig {
                 });
                 post("/add", (req, res) -> FamiliaController.addFamilia(req, res), gson::toJson);
             });
-
-            exception(IllegalArgumentException.class, (exception, req, res) -> ExceptionHandle.handleException400(exception, req, res));
-            exception(NullPointerException.class, (exception, req, res) -> ExceptionHandle.handleException400(exception, req, res));
-            exception(SQLException.class, (exception, req, res) -> ExceptionHandle.handleException500(exception, req, res));
-            exception(Exception.class, (exception, req, res) -> ExceptionHandle.handleException500(exception, req, res));
 
         });
 

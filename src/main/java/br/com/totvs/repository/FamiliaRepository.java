@@ -1,7 +1,7 @@
-package br.com.totvs.Repository;
+package br.com.totvs.repository;
 
-import br.com.totvs.BD.SQLiteConnection;
-import br.com.totvs.Domain.Familia;
+import br.com.totvs.db.SQLiteConnection;
+import br.com.totvs.domain.Familia;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -1,9 +1,9 @@
-package br.com.totvs.Services;
+package br.com.totvs.services;
 
-import br.com.totvs.Domain.Despesa;
-import br.com.totvs.Domain.Familia;
-import br.com.totvs.Repository.DespesaRepository;
-import br.com.totvs.Repository.FamiliaRepository;
+import br.com.totvs.domain.Despesa;
+import br.com.totvs.domain.Familia;
+import br.com.totvs.repository.DespesaRepository;
+import br.com.totvs.repository.FamiliaRepository;
 
 import java.util.List;
 

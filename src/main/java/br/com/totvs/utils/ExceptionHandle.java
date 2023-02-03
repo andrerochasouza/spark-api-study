@@ -1,4 +1,4 @@
-package br.com.totvs.Utils;
+package br.com.totvs.utils;
 
 import spark.Request;
 import spark.Response;

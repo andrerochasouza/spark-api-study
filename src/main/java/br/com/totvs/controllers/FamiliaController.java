@@ -1,10 +1,10 @@
-package br.com.totvs.Controllers;
+package br.com.totvs.controllers;
 
-import br.com.totvs.Domain.Despesa;
-import br.com.totvs.Domain.Familia;
-import br.com.totvs.Repository.DespesaRepository;
-import br.com.totvs.Repository.FamiliaRepository;
-import br.com.totvs.Services.FamiliaService;
+import br.com.totvs.domain.Despesa;
+import br.com.totvs.domain.Familia;
+import br.com.totvs.repository.DespesaRepository;
+import br.com.totvs.repository.FamiliaRepository;
+import br.com.totvs.services.FamiliaService;
 import spark.Request;
 import spark.Response;
 

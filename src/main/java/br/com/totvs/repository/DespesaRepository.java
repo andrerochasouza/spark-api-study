@@ -1,8 +1,8 @@
-package br.com.totvs.Repository;
+package br.com.totvs.repository;
 
-import br.com.totvs.BD.SQLiteConnection;
-import br.com.totvs.Domain.Categoria;
-import br.com.totvs.Domain.Despesa;
+import br.com.totvs.db.SQLiteConnection;
+import br.com.totvs.domain.Categoria;
+import br.com.totvs.domain.Despesa;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -143,31 +143,6 @@ public class DespesaRepository {
         }
     }
 
-    public List<Despesa> getAllDespesas(){
-        String sql = "SELECT * FROM despesas";
-        List<Despesa> despesas = new ArrayList<>();
-        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Despesa despesa = new Despesa();
-                despesa.setId(rs.getInt("id"));
-                despesa.setNome(rs.getString("nome"));
-                despesa.setValor(rs.getDouble("valor"));
-                despesa.setDataInicio(rs.getString("dataInicio"));
-                despesa.setDataFinal(rs.getString("dataFinal"));
-                despesa.setDataPagamento(rs.getString("dataPagamento"));
-                despesa.setParcelado(rs.getBoolean("isParcelado"));
-                despesa.setQtdParcelas(rs.getInt("qtdParcelas"));
-                despesa.setTipoDespesa(Categoria.valueOf(rs.getString("tipoDespesa")));
-                despesas.add(despesa);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return despesas;
-    }
-
     public List<Despesa> getDespesasByFamilia(int idFamilia){
         String sql = "SELECT * FROM despesas WHERE idFamilia = ?";
         List<Despesa> despesas = new ArrayList<>();
@@ -195,17 +170,6 @@ public class DespesaRepository {
     }
 
     public Despesa getDespesa(int id){
-
-        String sqlVerifica = "SELECT * FROM despesas WHERE id = ?";
-        try (PreparedStatement stmt = this.connection.prepareStatement(sqlVerifica)) {
-            stmt.setObject(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (!rs.next()) {
-                return null;
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
 
         String sql = "SELECT * FROM despesas WHERE id = ?";
         Despesa despesa = new Despesa();
@@ -239,6 +203,31 @@ public class DespesaRepository {
             stmt.setObject(1, idFamilia);
             stmt.setObject(2, size);
             stmt.setObject(3, (page - 1) * size);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Despesa despesa = new Despesa();
+                despesa.setId(rs.getInt("id"));
+                despesa.setNome(rs.getString("nome"));
+                despesa.setValor(rs.getDouble("valor"));
+                despesa.setDataInicio(rs.getString("dataInicio"));
+                despesa.setDataFinal(rs.getString("dataFinal"));
+                despesa.setDataPagamento(rs.getString("dataPagamento"));
+                despesa.setParcelado(rs.getBoolean("isParcelado"));
+                despesa.setQtdParcelas(rs.getInt("qtdParcelas"));
+                despesa.setTipoDespesa(Categoria.valueOf(rs.getString("tipoDespesa")));
+                despesas.add(despesa);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return despesas;
+    }
+
+    public List<Despesa> getAllDespesas(){
+        String sql = "SELECT * FROM despesas";
+        List<Despesa> despesas = new ArrayList<>();
+        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Despesa despesa = new Despesa();
