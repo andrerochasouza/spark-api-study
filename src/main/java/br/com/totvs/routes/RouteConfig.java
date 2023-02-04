@@ -58,7 +58,6 @@ public class RouteConfig {
                 post("/add", (req, res) -> FamiliaController.addFamilia(req, res), gson::toJson);
             });
 
-
         });
 
         System.out.println("Servidor rodando na porta 4567");

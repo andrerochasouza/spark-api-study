@@ -21,144 +21,167 @@ public class DespesaController {
 
     public static ResponseResource getDespesa(Request req, Response res){
 
+        Despesa despesa = null;
+
         if(Integer.parseInt(req.params("id")) <= 0){
-            return ResponseResource.of(res, TypeStatus.BAD_REQUEST);
+            return ResponseResource.ofError(res, "Id inválido", TypeStatus.BAD_REQUEST);
         }
 
-        Despesa despesa = despesaService.getDespesa(Integer.parseInt(req.params("id")));
-
-        if(despesa.getId() == 0){
-            return ResponseResource.of(res, TypeStatus.BAD_REQUEST);
+        try {
+            despesa = despesaService.getDespesa(Integer.parseInt(req.params("id")));
+        } catch (Exception e) {
+            return ResponseResource.ofError(res, e.getMessage(), TypeStatus.BAD_REQUEST);
         }
 
-        return ResponseResource.of(res, TypeStatus.OK, despesa);
+        return ResponseResource.of(res, despesa, TypeStatus.OK);
 
     }
 
     public static ResponseResource getValorDespesa(Request req, Response res){
 
+        Despesa despesa = null;
+
         if(Integer.parseInt(req.params("id")) <= 0){
-            return ResponseResource.of(res, TypeStatus.BAD_REQUEST);
+            return ResponseResource.ofError(res, "Id inválido", TypeStatus.BAD_REQUEST);
         }
 
-        Despesa despesa = despesaService.getDespesa(Integer.parseInt(req.params("id")));
-
-        if(despesa.getId() == 0){
-            return ResponseResource.of(res, TypeStatus.BAD_REQUEST);
+        try {
+            despesa = despesaService.getDespesa(Integer.parseInt(req.params("id")));
+        } catch (Exception e) {
+            return ResponseResource.ofError(res, e.getMessage(), TypeStatus.BAD_REQUEST);
         }
 
-        return ResponseResource.of(res, TypeStatus.OK, despesa.getValor());
+        return ResponseResource.of(res, despesa.getValor(), TypeStatus.OK);
 
     }
 
     public static ResponseResource deleteDespesa(Request req, Response res){
 
         if(Integer.parseInt(req.params("id")) <= 0){
-            return ResponseResource.of(res, TypeStatus.BAD_REQUEST);
+            return ResponseResource.ofError(res, "Id inválido", TypeStatus.BAD_REQUEST);
         }
 
-        despesaService.deleteDespesa(Integer.parseInt(req.params("id")));
+        try {
+            despesaService.deleteDespesa(Integer.parseInt(req.params("id")));
+        } catch (Exception e) {
+            return ResponseResource.ofError(res, e.getMessage(), TypeStatus.BAD_REQUEST);
+        }
 
-        return ResponseResource.of(res, TypeStatus.OK);
+        return ResponseResource.of(res, "Despesa deletada com sucesso", TypeStatus.OK);
 
     }
 
     public static ResponseResource deleteAllDespesas(Request req, Response res){
 
-        String str = despesaService.deleteAllDespesas();
+        String str = null;
 
-        return ResponseResource.of(res, TypeStatus.OK, str);
+        try {
+            str = despesaService.deleteAllDespesas();
+        } catch (Exception e) {
+            return ResponseResource.ofError(res, e.getMessage(), TypeStatus.BAD_REQUEST);
+        }
+
+        return ResponseResource.of(res, str, TypeStatus.OK);
 
     }
 
     public static ResponseResource updateDespesa(Request req, Response res) {
 
-        if(validarData(req.queryParams("dataFinal"), req.queryParams("dataPagamento"))){
-            return ResponseResource.of(res, TypeStatus.BAD_REQUEST);
-        }
+        if(isValido(req.queryParams("dataFinal"))){
+            try {
+                despesaService.updateDespesa(
+                        Integer.parseInt(req.params("id")),
+                        Integer.parseInt(req.queryParams("idFamilia")),
+                        req.queryParams("nomeDespesa"),
+                        Double.parseDouble(req.queryParams("valor")),
+                        req.queryParams("dataFinal"),
+                        Boolean.parseBoolean(req.queryParams("isPago")),
+                        Boolean.parseBoolean(req.queryParams("isParcelado")),
+                        Integer.parseInt(req.queryParams("qtdParcelas")),
+                        Categoria.valueOf(req.queryParams("tipoDespesa")));
+            } catch (Exception e) {
+                return ResponseResource.ofError(res, e.getMessage(), TypeStatus.BAD_REQUEST);
+            }
 
-        try {
-            despesaService.updateDespesa(
-                    Integer.parseInt(req.params("id")),
-                    Integer.parseInt(req.queryParams("idFamilia")),
-                    req.queryParams("nomeDespesa"),
-                    Double.parseDouble(req.queryParams("valor")),
-                    req.queryParams("dataFinal"),
-                    req.queryParams("dataPagamento"),
-                    Boolean.parseBoolean(req.queryParams("isParcelado")),
-                    Integer.parseInt(req.queryParams("qtdParcelas")),
-                    Categoria.valueOf(req.queryParams("tipoDespesa")));
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseResource.of(res, "Despesa atualizada com sucesso", TypeStatus.OK);
+        } else {
+            return ResponseResource.of(res, "Data inválida", TypeStatus.BAD_REQUEST);
         }
-
-        return ResponseResource.of(res, TypeStatus.OK);
 
     }
 
     public static ResponseResource addDespesa(Request req, Response res){
 
-        if(validarData(req.queryParams("dataFinal"), req.queryParams("dataPagamento"))) {
-            return ResponseResource.of(res, TypeStatus.BAD_REQUEST);
+        if(isValido(req.queryParams("dataFinal"))) {
+
+            try{
+                despesaService.addDespesaAFamilia(
+                        Integer.parseInt(req.queryParams("idFamilia")),
+                        req.queryParams("nomeDespesa"),
+                        Double.parseDouble(req.queryParams("valor")),
+                        req.queryParams("dataFinal"),
+                        Boolean.parseBoolean(req.queryParams("isPago")),
+                        Boolean.parseBoolean(req.queryParams("isParcelado")),
+                        Integer.parseInt(req.queryParams("qtdParcelas")),
+                        Categoria.valueOf(req.queryParams("tipoDespesa")));
+
+                return ResponseResource.of(res, "Despesa adicionada com sucesso", TypeStatus.OK);
+            } catch (Exception e) {
+                return ResponseResource.ofError(res, e.getMessage(), TypeStatus.BAD_REQUEST);
+            }
+
+        } else {
+            return ResponseResource.ofError(res, "Data inválida", TypeStatus.BAD_REQUEST);
         }
 
-        try{
-            despesaService.addDespesaAFamilia(
-                    Integer.parseInt(req.params("idFamilia")),
-                    req.queryParams("nomeDespesa"),
-                    Double.parseDouble(req.queryParams("valor")),
-                    req.queryParams("dataFinal"),
-                    req.queryParams("dataPagamento"),
-                    Boolean.parseBoolean(req.queryParams("isParcelado")),
-                    Integer.parseInt(req.queryParams("qtdParcelas")),
-                    Categoria.valueOf(req.queryParams("tipoDespesa")));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        return ResponseResource.of(res, TypeStatus.OK);
 
     }
 
     public static ResponseResource getAllDespesasByPage(Request req, Response res){
 
+        List<Despesa> despesas = null;
+
         if(Integer.parseInt(req.queryParams("page")) <= 0 || Integer.parseInt(req.queryParams("size")) <= 0){
-            return ResponseResource.of(res, TypeStatus.BAD_REQUEST);
+            return ResponseResource.ofError(res, "Page ou size inválido", TypeStatus.BAD_REQUEST);
         }
 
-        List<Despesa> despesas = despesaService.getAllDespesasByPage(Integer.parseInt(req.queryParams("page")), Integer.parseInt(req.queryParams("size")));
-
-        if(despesas.isEmpty()){
-            return ResponseResource.of(res, TypeStatus.BAD_REQUEST);
+        try {
+            despesas = despesaService.getAllDespesasByPage(Integer.parseInt(req.queryParams("page")), Integer.parseInt(req.queryParams("size")));
+        } catch (Exception e) {
+            return ResponseResource.ofError(res, e.getMessage(), TypeStatus.BAD_REQUEST);
         }
 
-        return ResponseResource.of(res, TypeStatus.OK, despesas);
+        return ResponseResource.of(res, despesas, TypeStatus.OK);
     }
 
     public static ResponseResource getAllDespesas(Request req, Response res){
 
-        List<Despesa> despesas = despesaService.getAllDespesas();
+        List<Despesa> despesas = null;
 
-        return ResponseResource.of(res, TypeStatus.OK, despesas);
+        try {
+            despesas = despesaService.getAllDespesas();
+        } catch (Exception e) {
+            return ResponseResource.ofError(res, e.getMessage(), TypeStatus.BAD_REQUEST);
+        }
+
+        return ResponseResource.of(res, despesas, TypeStatus.OK);
 
     }
 
-    private static boolean validarData(String dataFinal, String dataPagamento) {
+    private static boolean isValido(String dataFinal) {
 
-        if(dataFinal.length() != 10 || dataPagamento.length() != 10){
+        if(dataFinal == null){
             return false;
-        } else if(dataFinal.charAt(2) != '/' || dataFinal.charAt(5) != '/' ||
-                dataPagamento.charAt(2) != '/' || dataPagamento.charAt(5) != '/'){
+        } else if(dataFinal.length() != 10){
             return false;
-        } else if (Integer.parseInt(dataFinal.substring(0, 2)) > 31 ||
-                Integer.parseInt(dataFinal.substring(3, 5)) > 12 ||
-                Integer.parseInt(dataPagamento.substring(0, 2)) > 31 ||
-                Integer.parseInt(dataPagamento.substring(3, 5)) > 12){
+        } else if(dataFinal.charAt(2) != '/' || dataFinal.charAt(5) != '/'){
             return false;
-        } else if (Integer.parseInt(dataFinal.substring(0, 2)) <= 0 ||
-                Integer.parseInt(dataFinal.substring(3, 5)) <= 0 ||
-                Integer.parseInt(dataPagamento.substring(0, 2)) <= 0 ||
-                Integer.parseInt(dataPagamento.substring(3, 5)) <= 0){
+        } else if(Integer.parseInt(dataFinal.substring(0, 2)) > 31 || Integer.parseInt(dataFinal.substring(0, 2)) < 1){
+            return false;
+        } else if(Integer.parseInt(dataFinal.substring(3, 5)) > 12 || Integer.parseInt(dataFinal.substring(3, 5)) < 1){
+            return false;
+        } else if(Integer.parseInt(dataFinal.substring(6, 10)) < 2020){
             return false;
         }
 

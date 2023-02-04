@@ -33,7 +33,7 @@ public class FamiliaRepository {
         }
     }
 
-    public void addFamilia(String nome, double salario, double carteira) {
+    public void addFamilia(String nome, double salario, double carteira) throws SQLException {
         String sql = "INSERT INTO familias(nome, salario, carteira) VALUES(?, ?, ?)";
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
@@ -44,51 +44,56 @@ public class FamiliaRepository {
             System.out.println("Familia inserida com sucesso.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            throw  new SQLException("Não foi possível inserir a familia.");
         }
     }
 
-    public String deleteFamiliaById(int id) {
+    public String deleteFamiliaById(int id) throws SQLException {
         String sql = "DELETE FROM familias WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
             if(this.getFamilia(id) == null){
-                return "Não existe nenhuma familia com esse id.";
+                throw new SQLException("Não existe nenhuma familia com esse id.");
             }
 
             stmt.setObject(1, id);
             stmt.execute();
-            despesaRepository.deleteDespesasByFamiliaId(id);
+
+            if(despesaRepository.getDespesasByFamilia(id).size() > 0){
+                despesaRepository.deleteDespesasByFamiliaId(id);
+            }
+
             return "Familia deletada com sucesso.";
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return "Não foi possível deletar a familia.";
+            throw new SQLException("Não foi possível deletar a familia.");
         }
     }
 
-    public String deleteAllFamilias() {
+    public String deleteAllFamilias() throws SQLException {
         String sql = "DELETE FROM familias";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
             if(this.getAllFamilias().size() == 0){
-                return "Não existe nenhuma familia para ser deletada.";
+                throw new SQLException("Não existe nenhuma familia cadastrada.");
             }
 
             stmt.execute();
-            despesaRepository.deleteAllDespesas();
+
+            if(despesaRepository.getAllDespesas().size() > 0){
+                despesaRepository.deleteAllDespesas();
+            }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return "Não foi possível deletar as familias.";
+            throw new SQLException("Não foi possível deletar as familias.");
         }
 
         return "Todas as familias deletadas com sucesso.";
     }
 
-    public void updateFamilia(int id, String nome, double salario, double carteira) {
+    public void updateFamilia(int id, String nome, double salario, double carteira) throws SQLException {
         String sql = "UPDATE familias SET nome = ?, salario = ?, SET carteira = ? WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
@@ -101,12 +106,11 @@ public class FamiliaRepository {
             System.out.println("Familia atualizada com sucesso.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Não foi possível atualizar a familia.");
+            throw new SQLException("Não foi possível atualizar a familia.");
         }
     }
 
-    public void updateFamiliaNome(int id, String nome) {
+    public void updateFamiliaNome(int id, String nome) throws SQLException {
         String sql = "UPDATE familias SET nome = ? WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
@@ -117,12 +121,11 @@ public class FamiliaRepository {
             System.out.println("Familia atualizada com sucesso.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Não foi possível atualizar a familia.");
+            throw new SQLException("Não foi possível atualizar a familia.");
         }
     }
 
-    public void updateFamiliaSalario(int id, double salario) {
+    public void updateFamiliaSalario(int id, double salario) throws SQLException {
         String sql = "UPDATE familias SET salario = ? WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
@@ -133,12 +136,11 @@ public class FamiliaRepository {
             System.out.println("Familia atualizada com sucesso.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Não foi possível atualizar a familia.");
+            throw new SQLException("Não foi possível atualizar a familia.");
         }
     }
 
-    public void updateFamiliaCarteira(int id, double carteira) {
+    public void updateFamiliaCarteira(int id, double carteira) throws SQLException {
         String sql = "UPDATE familias SET carteira = ? WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
@@ -149,13 +151,12 @@ public class FamiliaRepository {
             System.out.println("Familia atualizada com sucesso.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Não foi possível atualizar a familia.");
+            throw new SQLException("Não foi possível atualizar a familia.");
         }
     }
 
 
-    public Familia getFamilia(int id) {
+    public Familia getFamilia(int id) throws SQLException {
 
         String sql = "SELECT * FROM familias WHERE id = ?";
         Familia familia = new Familia();
@@ -166,7 +167,7 @@ public class FamiliaRepository {
             ResultSet rs = stmt.executeQuery();
 
             if(!rs.next()){
-                return null;
+                throw new SQLException("Não existe nenhuma familia com esse id.");
             }
 
             familia.setId(rs.getInt("id"));
@@ -174,18 +175,16 @@ public class FamiliaRepository {
             familia.setSalario(rs.getDouble("salario"));
             familia.setCarteira(rs.getDouble("carteira"));
             familia.setDespesas(despesaRepository.getDespesasByFamilia(id));
-            System.out.println("Familia selecionada com sucesso.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Não foi possível selecionar a familia.");
+            throw new SQLException("Não foi possível selecionar a familia.");
         }
 
         return familia;
 
     }
 
-    public List<Familia> getAllFamilias(){
+    public List<Familia> getAllFamilias() throws SQLException {
         String sql = "SELECT * FROM familias";
         List<Familia> familias = new ArrayList<>();
 
@@ -202,17 +201,15 @@ public class FamiliaRepository {
                 familia.setDespesas(despesaRepository.getDespesasByFamilia(rs.getInt("id")));
                 familias.add(familia);
             }
-            System.out.println("Familias selecionadas com sucesso.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Não foi possível selecionar as familias.");
+            throw new SQLException("Não foi possível selecionar as familias.");
         }
 
         return familias;
     }
 
-    public List<Familia> getAllFamiliasToPage(int page, int size){
+    public List<Familia> getAllFamiliasToPage(int page, int size) throws SQLException {
         String sql = "SELECT * FROM familias LIMIT ? OFFSET ?";
         List<Familia> familias = new ArrayList<>();
 
@@ -234,10 +231,49 @@ public class FamiliaRepository {
             System.out.println("Familias selecionadas com sucesso.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Não foi possível selecionar as familias.");
+            throw new SQLException("Não foi possível selecionar as familias.");
         }
 
         return familias;
+    }
+
+    public List<Integer> getAllIDsFamilias() throws SQLException {
+        String sql = "SELECT id FROM familias";
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next()){
+                ids.add(rs.getInt("id"));
+            }
+            System.out.println("IDs selecionados com sucesso.");
+
+        } catch (SQLException e) {
+            throw new SQLException("Não foi possível selecionar os IDs.");
+        }
+
+        return ids;
+    }
+
+    public Integer getLastIDFamilia() throws SQLException {
+        String sql = "SELECT id FROM familias ORDER BY id DESC LIMIT 1";
+        Integer id = null;
+
+        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+
+            ResultSet rs = stmt.executeQuery();
+
+            if(rs.next()){
+                id = rs.getInt("id");
+            }
+            System.out.println("ID selecionado com sucesso.");
+
+        } catch (SQLException e) {
+            throw new SQLException("Não foi possível selecionar o ID.");
+        }
+
+        return id;
     }
 }

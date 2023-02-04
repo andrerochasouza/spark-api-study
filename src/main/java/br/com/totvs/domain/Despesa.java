@@ -11,18 +11,18 @@ public class Despesa {
     private double valor = 0;
     private String dataInicio = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
     private String dataFinal = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
-    private String dataPagamento = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+    private boolean isPago = false;
     private boolean isParcelado = false;
     private int qtdParcelas = 0;
     private Categoria tipoDespesa = Categoria.OUTROS;
 
-    public Despesa(int id, String nome, double valor, String dataInicio, String dataFinal, String dataPagamento, boolean isParcelado, int qtdParcelas, Categoria tipoDespesa) {
+    public Despesa(int id, String nome, double valor, String dataInicio, String dataFinal, boolean isPago, boolean isParcelado, int qtdParcelas, Categoria tipoDespesa) {
         this.id = id;
         this.nome = nome;
         this.valor = valor;
         this.dataInicio = dataInicio;
         this.dataFinal = dataFinal;
-        this.dataPagamento = dataPagamento;
+        this.isPago = isPago;
         this.isParcelado = isParcelado;
         this.qtdParcelas = qtdParcelas;
         this.tipoDespesa = tipoDespesa;
@@ -71,12 +71,12 @@ public class Despesa {
         this.dataFinal = dataFinal;
     }
 
-    public String getDataPagamento() {
-        return dataPagamento;
+    public boolean isPago() {
+        return isPago;
     }
 
-    public void setDataPagamento(String dataPagamento) {
-        this.dataPagamento = dataPagamento;
+    public void setPago(boolean pago) {
+        isPago = pago;
     }
 
     public boolean isParcelado() {
@@ -112,13 +112,12 @@ public class Despesa {
 
         if (id != despesa.id) return false;
         if (Double.compare(despesa.valor, valor) != 0) return false;
+        if (isPago != despesa.isPago) return false;
         if (isParcelado != despesa.isParcelado) return false;
         if (qtdParcelas != despesa.qtdParcelas) return false;
         if (!Objects.equals(nome, despesa.nome)) return false;
         if (!Objects.equals(dataInicio, despesa.dataInicio)) return false;
         if (!Objects.equals(dataFinal, despesa.dataFinal)) return false;
-        if (!Objects.equals(dataPagamento, despesa.dataPagamento))
-            return false;
         return tipoDespesa == despesa.tipoDespesa;
     }
 
@@ -132,7 +131,7 @@ public class Despesa {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (dataInicio != null ? dataInicio.hashCode() : 0);
         result = 31 * result + (dataFinal != null ? dataFinal.hashCode() : 0);
-        result = 31 * result + (dataPagamento != null ? dataPagamento.hashCode() : 0);
+        result = 31 * result + (isPago ? 1 : 0);
         result = 31 * result + (isParcelado ? 1 : 0);
         result = 31 * result + qtdParcelas;
         result = 31 * result + (tipoDespesa != null ? tipoDespesa.hashCode() : 0);
@@ -147,7 +146,7 @@ public class Despesa {
                 ", valor=" + valor +
                 ", dataInicio='" + dataInicio + '\'' +
                 ", dataFinal='" + dataFinal + '\'' +
-                ", dataPagamento='" + dataPagamento + '\'' +
+                ", isPago=" + isPago +
                 ", isParcelado=" + isParcelado +
                 ", qtdParcelas=" + qtdParcelas +
                 ", tipoDespesa=" + tipoDespesa +

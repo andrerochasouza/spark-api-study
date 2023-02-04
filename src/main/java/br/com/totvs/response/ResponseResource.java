@@ -9,32 +9,35 @@ import java.util.Objects;
 public class ResponseResource<E> {
 
     private E resource;
-    private String message;
+    private String messageError;
+    private String messageStatus;
     private int status;
 
-    private ResponseResource(TypeStatus typeStatus, E resource) {
+    private ResponseResource(E resource, String messageError, TypeStatus typeStatus) {
         this.resource = resource;
-        this.message = typeStatus.getMessage();
+        this.messageError = messageError;
+        this.messageStatus = typeStatus.getMessage();
         this.status = typeStatus.getStatus();
     }
 
-    public static <E> ResponseResource<E> of(Response response, TypeStatus typeStatus, E resource) {
+    public static <E> ResponseResource<E> of(Response response, E resource, TypeStatus typeStatus) {
         response.status(typeStatus.getStatus());
         response.type("application/json");
-        return new ResponseResource<>(typeStatus, resource);
+        return new ResponseResource<>(resource, null, typeStatus);
     }
 
-    public static <E> ResponseResource<E> of(Response response, TypeStatus typeStatus) {
+    public static ResponseResource ofError(Response response, String messageError, TypeStatus typeStatus) {
         response.status(typeStatus.getStatus());
         response.type("application/json");
-        return new ResponseResource<>(typeStatus, null);
+        return new ResponseResource<>(null, messageError, typeStatus);
     }
 
     @Override
     public String toString() {
         return "ResponseResource{" +
                 "resource=" + resource +
-                ", message='" + message + '\'' +
+                ", messageError='" + messageError + '\'' +
+                ", messageStatus='" + messageStatus + '\'' +
                 ", status=" + status +
                 '}';
     }
