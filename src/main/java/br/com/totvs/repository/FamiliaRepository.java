@@ -18,6 +18,12 @@ public class FamiliaRepository {
         this.createTable();
     }
 
+    public FamiliaRepository(Connection connection) {
+        this.connection = connection;
+        this.despesaRepository = new DespesaRepository();
+        this.createTable();
+    }
+
     private void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS familias (\n"
                 + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
@@ -41,10 +47,9 @@ public class FamiliaRepository {
             stmt.setObject(2, salario);
             stmt.setObject(3, carteira);
             stmt.execute();
-            System.out.println("Familia inserida com sucesso.");
 
         } catch (SQLException e) {
-            throw  new SQLException("Não foi possível inserir a familia.");
+            throw new SQLException("Não foi possível inserir a familia.");
         }
     }
 

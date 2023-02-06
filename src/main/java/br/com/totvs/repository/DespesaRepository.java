@@ -17,6 +17,11 @@ public class DespesaRepository {
         this.createTable();
     }
 
+    public DespesaRepository(Connection connection) {
+        this.connection = connection;
+        this.createTable();
+    }
+
 
     private void createTable() {
 
