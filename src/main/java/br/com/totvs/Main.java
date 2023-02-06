@@ -6,6 +6,6 @@ public class Main {
     public static void main(String[] args) {
 
         RouteConfig.initHMG(true, true, false);
-        // RouteConfig.initPROD();
+        // RouteConfig.initPROD(8080, true, true, false);
     }
 }
