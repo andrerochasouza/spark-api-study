@@ -50,15 +50,13 @@ public class SQLiteConnection {
         return connection;
     }
 
-    public void testConnection() {
-        try {
-            if (connection != null) {
-                System.out.println("Conexão com o banco de dados estabelecida.");
-            } else {
-                System.out.println("Conexão com o banco de dados não estabelecida.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public boolean testConnection() {
+        if (connection != null) {
+            System.out.println("Conexão com o banco de dados estabelecida.");
+            return true;
+        } else {
+            System.out.println("Conexão com o banco de dados não estabelecida.");
+            return false;
         }
     }
 

@@ -1,0 +1,31 @@
+package br.com.totvs.utils;
+
+public class Curl {
+    public static String get(String url) {
+        String result = "";
+        try {
+            ProcessBuilder pb = new ProcessBuilder("curl", "-i", url);
+            Process p = pb.start();
+            p.waitFor();
+            result = new String(p.getInputStream().readAllBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static String post(String url, String data) {
+        String result = "";
+        try {
+            ProcessBuilder pb = new ProcessBuilder("curl", "-i", "-X", "POST", "-d", data, url);
+            Process p = pb.start();
+            p.waitFor();
+            result = new String(p.getInputStream().readAllBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+}

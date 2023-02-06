@@ -3,6 +3,7 @@ package br.com.totvs.routes;
 import br.com.totvs.controllers.DespesaController;
 import br.com.totvs.controllers.FamiliaController;
 import br.com.totvs.db.SQLiteConnection;
+import br.com.totvs.utils.HealthCheck;
 import com.google.gson.Gson;
 
 import static spark.Spark.*;
@@ -11,21 +12,58 @@ public class RouteConfig {
 
     private static final Gson gson = new Gson();
 
-    public static void initHMG() {
+    public static void initHMG(boolean enableHealthCheck, boolean enableCORS, boolean enableAuth) {
+
+        // Conexão com o banco de dados
+
+        if(!SQLiteConnection.getInstance().testConnection()){
+            System.out.println("Erro ao conectar com o banco de dados - SQLiteConnection");
+            System.exit(0);
+        }
+
+        // Configurações do Spark
 
         port(4567);
-        SQLiteConnection.getInstance().testConnection();
+        threadPool(8, 2, 30000);
 
-        // Autenticação
+        // CORS e Headers de Segurança && Autenticação
 
         before("/*", (req, res) -> {
+
+            // CORS e Headers de Segurança
+            if(enableCORS){
+                res.header("Access-Control-Allow-Origin", "*");
+                res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+                res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Content-Length, Accept, Origin,");
+                res.header("X-Frame-Options", "SAMEORIGIN");
+                res.header("X-XSS-Protection", "1; mode=block");
+                res.header("X-Content-Type-Options", "nosniff");
+                res.header("Content-Security-Policy", "default-src 'self'");
+                res.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+                res.header("Referrer-Policy", "no-referrer-when-downgrade");
+            }
+
             // TODO: Implementar autenticação
+            if(enableAuth){
+
+            }
+
         });
+
+        // HealthCheck
+
+        if(enableHealthCheck){
+            get("/healthcheck", (req, res) -> "OK");
+
+            if (!HealthCheck.healthCheckByCurl(4567) && enableHealthCheck) {
+                System.out.println("Erro ao iniciar o servidor - HealthCheck");
+                System.exit(0);
+            }
+        }
 
         // Mapeamento de Paths do API
 
         path("/api", () -> {
-
             path("/despesa", () -> {
                 path("/all", () -> {
                     get("", (req, res) -> DespesaController.getAllDespesas(req, res), gson::toJson);
@@ -63,35 +101,58 @@ public class RouteConfig {
         System.out.println("Servidor rodando na porta 4567");
     }
 
-    public static void initPROD() {
+    public static void initPROD(int port, boolean enableHealthCheck, boolean enableCORS, boolean enableAuth) {
 
-        port(8080);
-        SQLiteConnection.getInstance().testConnection();
+        // Conexão com o banco de dados
 
-        // Headers de CORS - PROD
+        if(!SQLiteConnection.getInstance().testConnection()){
+            System.out.println("Erro ao conectar com o banco de dados - SQLiteConnection");
+            System.exit(0);
+        }
 
-        before("/*", (req, res) -> {
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-            res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Content-Length, Accept, Origin,");
-            res.header("X-Frame-Options", "SAMEORIGIN");
-            res.header("X-XSS-Protection", "1; mode=block");
-            res.header("X-Content-Type-Options", "nosniff");
-            res.header("Content-Security-Policy", "default-src 'self'");
-            res.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-            res.header("Referrer-Policy", "no-referrer-when-downgrade");
-        });
+        // Configurações do Spark
 
-        // Autenticação
+        port(port);
+        threadPool(8, 2, 30000);
+
+        // CORS e Headers de Segurança && Autenticação
 
         before("/*", (req, res) -> {
+
+            // CORS e Headers de Segurança
+            if(enableCORS){
+                res.header("Access-Control-Allow-Origin", "*");
+                res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+                res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Content-Length, Accept, Origin,");
+                res.header("X-Frame-Options", "SAMEORIGIN");
+                res.header("X-XSS-Protection", "1; mode=block");
+                res.header("X-Content-Type-Options", "nosniff");
+                res.header("Content-Security-Policy", "default-src 'self'");
+                res.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+                res.header("Referrer-Policy", "no-referrer-when-downgrade");
+            }
+
             // TODO: Implementar autenticação
+            if(enableAuth){
+
+            }
+
         });
+
+        // HealthCheck
+
+        if(enableHealthCheck){
+            get("/healthcheck", (req, res) -> "OK");
+
+            if (!HealthCheck.healthCheckByCurl(port) && enableHealthCheck) {
+                System.out.println("Erro ao iniciar o servidor - HealthCheck");
+                System.exit(0);
+            }
+        }
 
         // Mapeamento de Paths do API
 
         path("/api", () -> {
-
             path("/despesa", () -> {
                 path("/all", () -> {
                     get("", (req, res) -> DespesaController.getAllDespesas(req, res), gson::toJson);
@@ -126,8 +187,7 @@ public class RouteConfig {
 
         });
 
-        System.out.println("Servidor rodando na porta 8080");
-
+        System.out.println("Servidor rodando na porta " + port);
     }
 
 }
