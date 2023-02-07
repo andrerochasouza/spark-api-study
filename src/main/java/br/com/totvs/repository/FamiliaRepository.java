@@ -99,7 +99,7 @@ public class FamiliaRepository {
     }
 
     public void updateFamilia(int id, String nome, double salario, double carteira) throws SQLException {
-        String sql = "UPDATE familias SET nome = ?, salario = ?, SET carteira = ? WHERE id = ?";
+        String sql = "UPDATE familias SET nome = ?, salario = ?, carteira = ? WHERE id = ?";
 
         try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
 
@@ -108,7 +108,6 @@ public class FamiliaRepository {
             stmt.setObject(3, carteira);
             stmt.setObject(4, id);
             stmt.execute();
-            System.out.println("Familia atualizada com sucesso.");
 
         } catch (SQLException e) {
             throw new SQLException("Não foi possível atualizar a familia.");
@@ -253,7 +252,6 @@ public class FamiliaRepository {
             while(rs.next()){
                 ids.add(rs.getInt("id"));
             }
-            System.out.println("IDs selecionados com sucesso.");
 
         } catch (SQLException e) {
             throw new SQLException("Não foi possível selecionar os IDs.");
@@ -273,7 +271,6 @@ public class FamiliaRepository {
             if(rs.next()){
                 id = rs.getInt("id");
             }
-            System.out.println("ID selecionado com sucesso.");
 
         } catch (SQLException e) {
             throw new SQLException("Não foi possível selecionar o ID.");

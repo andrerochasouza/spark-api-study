@@ -8,25 +8,15 @@ import java.sql.SQLException;
 
 public class SQLiteConnectionTest {
 
-    private static SQLiteConnectionTest instance;
     private Connection connection;
 
-    private SQLiteConnectionTest() {
+    public SQLiteConnectionTest() {
         try {
 
             File file = new File(getClass().getResource("/").getPath() + "dbtest.sqlite");
 
             if(!file.exists()){
-                System.out.println("Arquivo dbtest.sqlite não encontrado");
-                System.out.println("Criando arquivo dbtest.sqlite...");
-
                 boolean fileCreated = file.createNewFile();
-
-                if(fileCreated){
-                    System.out.println("Arquivo dbtest.sqlite criado com sucesso!");
-                } else {
-                    System.out.println("Erro ao criar arquivo dbtest.sqlite");
-                }
             }
 
             String url = getClass().getResource("/dbtest.sqlite").getPath();
@@ -39,23 +29,26 @@ public class SQLiteConnectionTest {
         }
     }
 
-    public static SQLiteConnectionTest getInstance() {
-        if (instance == null) {
-            instance = new SQLiteConnectionTest();
-        }
-        return instance;
-    }
-
     public Connection getConnection() {
         return connection;
     }
 
+    public void closeConnectionAndDeleteFile() throws SQLException {
+        if(connection != null){
+            connection.close();
+        }
+
+        File file = new File(getClass().getResource("/").getPath() + "dbtest.sqlite");
+
+        if(file.exists()){
+            file.delete();
+        }
+    }
+
     public boolean testConnection() {
         if (connection != null) {
-            System.out.println("Conexão com o banco de dados estabelecida.");
             return true;
         } else {
-            System.out.println("Conexão com o banco de dados não estabelecida.");
             return false;
         }
     }
