@@ -33,7 +33,8 @@ public class SQLiteConnection {
             connection = DriverManager.getConnection("jdbc:sqlite:" + url);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao conectar com o banco de dados");
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

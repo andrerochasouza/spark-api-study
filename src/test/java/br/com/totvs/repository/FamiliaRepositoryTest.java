@@ -1,11 +1,10 @@
 package br.com.totvs.repository;
 
-import br.com.totvs.db.SQLiteConnectionTest;
+import br.com.totvs.Mock.SQLiteConnectionTest;
 import br.com.totvs.domain.Familia;
 import org.junit.jupiter.api.*;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import spark.utils.Assert;
 
 import java.io.File;
 import java.sql.Connection;
@@ -19,7 +18,7 @@ public class FamiliaRepositoryTest {
     private FamiliaRepository familiaRepository;
     private DespesaRepository despesaRepository;
     private SQLiteConnectionTest sqLiteConnectionTest;
-    private File dbFileTarget = new File(System.getProperty("user.dir") + "/target/classes/dbtest.sqlite");
+    private File dbFileTarget = new File(System.getProperty("user.dir") + "/target/test-classes/dbtest.sqlite");
 
     @BeforeEach
     void setup() {
@@ -33,7 +32,7 @@ public class FamiliaRepositoryTest {
 
     @AfterEach
     void tearDown() throws SQLException {
-        sqLiteConnectionTest.closeConnectionAndDeleteFile();
+        sqLiteConnectionTest.closeConnectionAndDeleteFile(dbFileTarget);
     }
 
 

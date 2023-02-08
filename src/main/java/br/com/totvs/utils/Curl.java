@@ -9,7 +9,7 @@ public class Curl {
             p.waitFor();
             result = new String(p.getInputStream().readAllBytes());
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return result;
     }
@@ -22,7 +22,7 @@ public class Curl {
             p.waitFor();
             result = new String(p.getInputStream().readAllBytes());
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return result;
     }

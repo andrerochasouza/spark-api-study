@@ -60,7 +60,6 @@ public class DespesaRepository {
             stmt.setObject(8, despesa.getTipoDespesa().toString());
             stmt.setObject(9, idFamilia);
             stmt.execute();
-            System.out.println("Despesa inserida com sucesso.");
 
         } catch (SQLException e) {
             throw new SQLException("Não foi possível inserir a despesa.");
@@ -139,7 +138,6 @@ public class DespesaRepository {
             stmt.setObject(9, idFamilia);
             stmt.setObject(10, despesa.getId());
             stmt.execute();
-            System.out.println("Despesa atualizada com sucesso.");
 
         } catch (SQLException e) {
             throw new SQLException("Não foi possível atualizar a despesa.");

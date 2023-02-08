@@ -58,6 +58,9 @@ public class FamiliaService {
     }
 
     public List<Despesa> getAllDespesasFamilia(int familiaId) throws SQLException {
+
+        familiaRepository.getFamilia(familiaId);
+
         return despesaRepository.getDespesasByFamilia(familiaId);
     }
 

@@ -1,4 +1,4 @@
-package br.com.totvs.db;
+package br.com.totvs.Mock;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,12 +33,10 @@ public class SQLiteConnectionTest {
         return connection;
     }
 
-    public void closeConnectionAndDeleteFile() throws SQLException {
+    public void closeConnectionAndDeleteFile(File file) throws SQLException {
         if(connection != null){
             connection.close();
         }
-
-        File file = new File(getClass().getResource("/").getPath() + "dbtest.sqlite");
 
         if(file.exists()){
             file.delete();
