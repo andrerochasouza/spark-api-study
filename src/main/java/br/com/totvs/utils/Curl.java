@@ -14,10 +14,10 @@ public class Curl {
         return result;
     }
 
-    public static String post(String url, String data) {
+    public static String post(String url, String body) {
         String result = "";
         try {
-            ProcessBuilder pb = new ProcessBuilder("curl", "-i", "-X", "POST", "-d", data, url);
+            ProcessBuilder pb = new ProcessBuilder("curl", "-i", "-X", "POST", "-d", body, url);
             Process p = pb.start();
             p.waitFor();
             result = new String(p.getInputStream().readAllBytes());

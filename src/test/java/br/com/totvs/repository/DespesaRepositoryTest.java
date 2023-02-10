@@ -1,6 +1,6 @@
 package br.com.totvs.repository;
 
-import br.com.totvs.Mock.SQLiteConnectionTest;
+import br.com.totvs.Mock.SQLiteConnectionMock;
 import br.com.totvs.domain.Categoria;
 import br.com.totvs.domain.Despesa;
 import org.junit.jupiter.api.*;
@@ -11,14 +11,13 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 @RunWith(JUnitPlatform.class)
 public class DespesaRepositoryTest {
 
     private DespesaRepository despesaRepository;
     private FamiliaRepository familiaRepository;
-    private SQLiteConnectionTest sqLiteConnectionTest;
+    private SQLiteConnectionMock sqLiteConnectionMock;
     private File dbFileTarget = new File(System.getProperty("user.dir") + "/target/test-classes/dbtest.sqlite");
 
     private static Despesa getNewDespesa(){
@@ -34,8 +33,8 @@ public class DespesaRepositoryTest {
     @BeforeEach
     void setup() throws SQLException {
 
-        sqLiteConnectionTest = new SQLiteConnectionTest();
-        Connection conn = sqLiteConnectionTest.getConnection();
+        sqLiteConnectionMock = new SQLiteConnectionMock();
+        Connection conn = sqLiteConnectionMock.getConnection();
 
         familiaRepository = new FamiliaRepository(conn);
         despesaRepository = new DespesaRepository(conn);
@@ -46,7 +45,7 @@ public class DespesaRepositoryTest {
 
     @AfterEach
     void tearDown() throws SQLException {
-        sqLiteConnectionTest.closeConnectionAndDeleteFile(dbFileTarget);
+        sqLiteConnectionMock.closeConnectionAndDeleteFile(dbFileTarget);
     }
 
 

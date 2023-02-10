@@ -6,11 +6,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SQLiteConnectionTest {
+public class SQLiteConnectionMock {
 
     private Connection connection;
 
-    public SQLiteConnectionTest() {
+    public SQLiteConnectionMock() {
         try {
 
             File file = new File(getClass().getResource("/").getPath() + "dbtest.sqlite");
